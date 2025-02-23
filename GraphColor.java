@@ -100,38 +100,37 @@ public class GraphColor
         return true;
     }
     
-    public boolean backtracking(int vertex)
+    public boolean backtracking(int vertex) 
     {
-        for(int i = 0; i < colorCount; i++)
+        
+        for (int i = 0; i < colorCount; i++)
         {
-            if(canColor(vertex, i) == true)
+            if (canColor(vertex, i))
             {
-                colorList.set(vertex, i);
+                colorList.set(vertex, i);  
+                visitedCount++;
+    
+                if (visitedCount == vertexCount)
+                {
+                    return true;  
+                }
+    
+                for (int j = 0; j < graph.get(vertex).size(); j++) 
+                {
+                    int neighborVertex = graph.get(vertex).get(j);
+                    if (colorList.get(neighborVertex) == -1) 
+                    {
+                        if (backtracking(neighborVertex)) 
+                        {
+                            return true;
+                        }
+                    }
+                }
+    
+                visitedCount--;
+                colorList.set(vertex, -1);
             }
         }
-
-        if(colorList.get(vertex) == -1) return false;
-
-        visitedCount++;
-
-        if(visitedCount == vertexCount) return true;
-
-        int neigbourVertex;
-        for(int i = 0; i < graph.get(vertex).size(); i++)
-        {
-            neigbourVertex = graph.get(vertex).get(i);
-            
-            if(colorList.get(neigbourVertex) != -1) continue;
-            
-            if(backtracking(neigbourVertex) == true)
-            {
-                return true;
-            }
-            
-        }
-
-        visitedCount--;
-        colorList.set(vertex, -1);
         return false;
     }
 
