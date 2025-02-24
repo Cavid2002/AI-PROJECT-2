@@ -13,6 +13,10 @@ public class GraphColor
 
     GraphColor(String filename)
     {
+        graph = new TreeMap<>();
+        colorList = new TreeMap<>();
+        domain = new TreeMap<>();
+
         try
         {
             File file = new File(filename);
@@ -24,35 +28,74 @@ public class GraphColor
 
             scan.close();
         }
+        catch(NullPointerException e)
+        {
+            System.err.println("NULL execption");
+            System.exit(1);
+        }
         catch(Exception e)
         {
-            System.err.println("Graph Color Contructor");   
-            System.err.println(e.getStackTrace());
+            System.err.println("Graph Color Contructor Error");   
             System.exit(1);
+        }
+
+
+    }
+
+    
+    private void readGraph(Scanner scan)
+    {
+        String line;
+        String[] splitLine;
+        int a, b;
+        while(scan.hasNextLine())
+        {
+            line = scan.nextLine();
+            if(line.isEmpty() || line.charAt(0) == '#') continue;   
+            
+            splitLine = line.split(",");
+            
+            a = Integer.parseInt(splitLine[0]);
+            b = Integer.parseInt(splitLine[1]);
+
+            System.out.println(a + " " + b);
+
+            insertToGraph(a, b);
+            insertToGraph(b, a);
+
+            initDomain(a);
+            initDomain(b);
+
+            colorList.put(a, -1);
+            colorList.put(b, -1);
+
+            
         }
 
     }
 
 
-
     private void readColorCount(Scanner scan)
     { 
+        System.out.println("readColorCount starting...");
         String line;
         String[] splitLine;
         while(scan.hasNextLine())
         {
             line = scan.nextLine();
-            if(line.charAt(0) == '#') continue;   
+            if(line.isEmpty() || line.charAt(0) == '#') continue;   
             
             splitLine = line.split(" ");
             
             if(splitLine[0].equals("colors"))
             {
-                colorCount = Integer.parseInt(splitLine[2]);
+                colorCount = Integer.parseInt(splitLine[2].trim());
                 return;
             }
 
         }
+
+
     }
 
     private void insertToGraph(int a, int b)
@@ -75,36 +118,6 @@ public class GraphColor
         {
             domain.get(a).add(i);
         }
-    }
-
-    
-    private void readGraph(Scanner scan)
-    {
-        String line;
-        String[] splitLine;
-        int a, b;
-        while(scan.hasNextLine())
-        {
-            line = scan.nextLine();
-            if(line.charAt(0) == '#') continue;   
-            
-            splitLine = line.split(",");
-            
-            a = Integer.parseInt(splitLine[0]);
-            b = Integer.parseInt(splitLine[1]);
-
-            insertToGraph(a, b);
-            insertToGraph(b, a);
-
-            initDomain(a);
-            initDomain(b);
-
-            colorList.put(a, -1);
-            colorList.put(b, -1);
-
-            
-        }
-
     }
     
 
@@ -150,7 +163,7 @@ public class GraphColor
     }
     
 
-    private int getNextVertex()
+    public int getNextVertex()
     {
         for(int i : graph.keySet())
         {
@@ -223,5 +236,19 @@ public class GraphColor
         return false;
     }
 
+
+    public void printGraph()
+    {
+        System.out.println("Color Count:" + colorCount);
+        for(int i : graph.keySet())
+        {
+            System.out.print(i + " -> ");
+            for(int j : graph.get(i))
+            {
+                System.out.print(j + " ");
+            }
+            System.out.println();
+        }
+    }
 
 }

@@ -1,21 +1,12 @@
-import java.util.Map.Entry;
-import java.util.TreeMap;
 
 public class Main
 {
     public static void main(String[] args)
     {
-        TreeMap<Integer, String> map = new TreeMap<>();
+        GraphColor gc = new GraphColor("./samples/sample2.txt");
 
-        map.put(10, "RED");
-        map.put(5, "GREEN");
-        map.put(1, "BLUE");
+        gc.printGraph();
 
-        System.out.println(map.size());
-
-        for(Entry<Integer, String> entry : map.entrySet())
-        {
-            System.err.println(entry.getKey() + " " + entry.getValue());
-        }
+        gc.backtracking(gc.getNextVertex());
     }
 }
