@@ -1,17 +1,15 @@
 import java.io.File;
-import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Scanner;
+import java.util.TreeMap;
+
 
 public class GraphColor
 {
-    public static int maxSize = 50;
-
-
-    private int vertexCount;
-    private int visitedCount;
     private int colorCount;
-    private ArrayList<ArrayList<Integer>> graph;
-    private ArrayList<Integer> colorList;
+    private TreeMap<Integer, HashSet<Integer>> graph;
+    private TreeMap<Integer, Integer> colorList;
+    private TreeMap<Integer, HashSet<Integer>> domain;
 
     GraphColor(String filename)
     {
@@ -57,11 +55,32 @@ public class GraphColor
         }
     }
 
+    private void insertToGraph(int a, int b)
+    {
+        if(graph.containsKey(a) == false)
+        {
+            graph.put(a, new HashSet<>());
+        }
+        graph.get(a).add(b);
+    }
+
+    private void initDomain(int a)
+    {
+        if(domain.containsKey(a)) return;
+
+        domain.put(a, new HashSet<>());
+
+        for(int i = 1; i <= colorCount; i++)
+        {
+            domain.get(a).add(i);
+        }
+    }
+
     private void readGraph(Scanner scan)
     {
         String line;
         String[] splitLine;
-        int a, b, max = 0;
+        int a, b;
         while(scan.hasNextLine())
         {
             line = scan.nextLine();
@@ -71,67 +90,77 @@ public class GraphColor
             
             a = Integer.parseInt(splitLine[0]);
             b = Integer.parseInt(splitLine[1]);
-            
-            max = Math.max(max, a);
-            max = Math.max(max, b);
 
-            this.graph.get(a).add(b);
-            this.graph.get(b).add(a);
+            insertToGraph(a, b);
+            insertToGraph(b, a);
+
+            initDomain(a);
+            initDomain(b);
+
+            colorList.put(a, -1);
+            colorList.put(b, -1);
+
+            
         }
 
-        this.vertexCount = max;
     }
     
 
-    boolean canColor(int currentVertex, int color)
+    private boolean canColor(int currentVertex, int color)
     {
-        int neigbourVertex;
-        for(int i = 0; i < graph.get(currentVertex).size(); i++)
+        for(int neigbourVertex : graph.get(currentVertex))
         {
-            neigbourVertex = graph.get(currentVertex).get(i);
-
             if(colorList.get(neigbourVertex) == color)
             {
                 return false;
             }
-
         }
-
         return true;
     }
     
-    public boolean backtracking(int vertex) 
+    
+    public boolean backtracking(Integer vertex)
     {
-        
-        for (int i = 0; i < colorCount; i++)
+        if(vertex == null)
         {
-            if (canColor(vertex, i))
-            {
-                colorList.set(vertex, i);  
-                visitedCount++;
-    
-                if (visitedCount == vertexCount)
-                {
-                    return true;  
-                }
-    
-                for (int j = 0; j < graph.get(vertex).size(); j++) 
-                {
-                    int neighborVertex = graph.get(vertex).get(j);
-                    if (colorList.get(neighborVertex) == -1) 
-                    {
-                        if (backtracking(neighborVertex)) 
-                        {
-                            return true;
-                        }
-                    }
-                }
-    
-                visitedCount--;
-                colorList.set(vertex, -1);
-            }
+            return true;
         }
+
+        for(int i = 0; i < colorCount; i++)
+        {
+            if(canColor(vertex, i))
+            {
+                colorList.put(vertex, i);
+
+                if(backtracking(graph.higherKey(vertex)))
+                {
+                    return true;
+                }
+
+                colorList.put(vertex, -1);
+            }
+
+        }
+
         return false;
     }
+
+    
+    public boolean forwardChecking(Integer vertex)
+    { 
+        if(vertex == -1)
+        {
+            return true;
+        }
+
+
+        for(int i = 1; i <= colorCount; i++)
+        {
+            
+        }
+
+        return false;
+    }
+
 
 }
