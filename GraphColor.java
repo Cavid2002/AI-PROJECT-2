@@ -64,6 +64,7 @@ public class GraphColor
         graph.get(a).add(b);
     }
 
+
     private void initDomain(int a)
     {
         if(domain.containsKey(a)) return;
@@ -76,6 +77,7 @@ public class GraphColor
         }
     }
 
+    
     private void readGraph(Scanner scan)
     {
         String line;
@@ -116,12 +118,54 @@ public class GraphColor
             }
         }
         return true;
+
+    }
+
+    
+    private boolean updateDomain(int currentVertex, int color)
+    {
+        for(int neigbourVertex : graph.get(currentVertex))
+        {
+            if(colorList.get(neigbourVertex) == -1)
+            {
+                domain.get(neigbourVertex).remove(color);
+
+                if(domain.get(neigbourVertex).isEmpty()) return false;
+            }
+        }
+
+        return true;
+    }
+
+
+    private void restoreDomain(int currentVertex, int color)
+    {
+        for(int neigbourVertex : graph.get(currentVertex))
+        {
+            if(colorList.get(neigbourVertex) == -1)
+            {
+                domain.get(neigbourVertex).add(color);
+            }
+        }
     }
     
-    
-    public boolean backtracking(Integer vertex)
+
+    private int getNextVertex()
     {
-        if(vertex == null)
+        for(int i : graph.keySet())
+        {
+            if(colorList.get(i) == -1)
+            {
+                return i;
+            }
+        }
+        return -1;
+    }
+    
+
+    public boolean backtracking(int vertex)
+    {
+        if(vertex == -1)
         {
             return true;
         }
@@ -131,8 +175,8 @@ public class GraphColor
             if(canColor(vertex, i))
             {
                 colorList.put(vertex, i);
-
-                if(backtracking(graph.higherKey(vertex)))
+                    
+                if(backtracking(getNextVertex()))
                 {
                     return true;
                 }
@@ -145,8 +189,10 @@ public class GraphColor
         return false;
     }
 
+
+
     
-    public boolean forwardChecking(Integer vertex)
+    public boolean forwardChecking(int vertex)
     { 
         if(vertex == -1)
         {
@@ -154,9 +200,24 @@ public class GraphColor
         }
 
 
-        for(int i = 1; i <= colorCount; i++)
+        for(int i : domain.get(vertex))
         {
-            
+            colorList.put(vertex, i);
+
+            if(updateDomain(vertex, i) == false)
+            {
+                restoreDomain(vertex, i);
+                return false;
+            }
+
+            if(forwardChecking(getNextVertex()))
+            {
+                return true;
+            }
+
+
+            restoreDomain(vertex, i);
+            colorList.put(vertex, -1);
         }
 
         return false;
