@@ -6,10 +6,10 @@ import java.util.TreeMap;
 
 public class GraphColor
 {
-    private int colorCount;
-    private TreeMap<Integer, HashSet<Integer>> graph;
-    private TreeMap<Integer, Integer> colorList;
-    private TreeMap<Integer, HashSet<Integer>> domain;
+    protected int colorCount;
+    protected TreeMap<Integer, HashSet<Integer>> graph;
+    protected TreeMap<Integer, Integer> colorList;
+    protected TreeMap<Integer, HashSet<Integer>> domain;
 
     GraphColor(String filename)
     {
@@ -75,7 +75,7 @@ public class GraphColor
     }
 
 
-    private void readColorCount(Scanner scan)
+    protected void readColorCount(Scanner scan)
     { 
         String line;
         String[] splitLine;
@@ -97,7 +97,7 @@ public class GraphColor
 
     }
 
-    private void insertToGraph(int a, int b)
+    protected void insertToGraph(int a, int b)
     {
         if(graph.containsKey(a) == false)
         {
@@ -107,7 +107,7 @@ public class GraphColor
     }
 
 
-    private void initDomain(int a)
+    protected void initDomain(int a)
     {
         if(domain.containsKey(a)) return;
 
@@ -118,49 +118,7 @@ public class GraphColor
             domain.get(a).add(i);
         }
     }
-    
 
-    private boolean canColor(int currentVertex, int color)
-    {
-        for(int neigbourVertex : graph.get(currentVertex))
-        {
-            if(colorList.get(neigbourVertex) == color)
-            {
-                return false;
-            }
-        }
-        return true;
-
-    }
-
-    
-    private boolean updateDomain(int currentVertex, int color)
-    {
-        for(int neigbourVertex : graph.get(currentVertex))
-        {
-            if(colorList.get(neigbourVertex) == -1)
-            {
-                domain.get(neigbourVertex).remove(color);
-
-                if(domain.get(neigbourVertex).isEmpty()) return false;
-            }
-        }
-
-        return true;
-    }
-
-
-    private void restoreDomain(int currentVertex, int color)
-    {
-        for(int neigbourVertex : graph.get(currentVertex))
-        {
-            if(colorList.get(neigbourVertex) == -1)
-            {
-                domain.get(neigbourVertex).add(color);
-            }
-        }
-    }
-    
 
     public int getNextVertex()
     {
@@ -173,157 +131,8 @@ public class GraphColor
         }
         return -1;
     }
-    
-
-    public boolean backtracking(int vertex)
-    {
-        if(vertex == -1)
-        {
-            return true;
-        }
-
-        for(int i = 1; i <= colorCount; i++)
-        {
-            if(canColor(vertex, i))
-            {
-                colorList.put(vertex, i);
-                    
-                if(backtracking(getNextVertex()))
-                {
-                    return true;
-                }
-
-                colorList.put(vertex, -1);
-            }
-
-        }
-
-        return false;
-    }
-
-    public boolean AC3(int vertex)
-    {
-
-
-        return false;
-    }
 
     
-    public boolean forwardChecking(int vertex)
-    { 
-        if(vertex == -1)
-        {
-            return true;
-        }
-
-
-        for(int i : domain.get(vertex))
-        {
-            colorList.put(vertex, i);
-
-            if(updateDomain(vertex, i) == false)
-            {
-                restoreDomain(vertex, i);
-                colorList.put(vertex, -1);
-                continue;
-            }
-
-            if(forwardChecking(getNextVertex()))
-            {
-                return true;
-            }
-
-
-            restoreDomain(vertex, i);
-            colorList.put(vertex, -1);
-        }
-
-        return false;
-    }
-    
-    public boolean forwardCheckingMRVandLCV(int vertex)
-    {
-        if(vertex == -1)
-        {
-            return true;
-        }
-
-        int color = getLCV(vertex);
-
-        colorList.put(vertex, color);
-        
-        if(updateDomain(vertex, color) == false)
-        {
-            restoreDomain(vertex, color);
-            colorList.put(vertex, -1);
-            return false;
-        }
-        
-        if(forwardCheckingMRVandLCV(getMRVver()))
-        {
-            return true;
-        }
-
-        restoreDomain(vertex, color);
-        colorList.put(vertex, -1);
-
-        return false;
-    }
-
-    private boolean tiebreaker(int vertex1, int vertex2)
-    {
-        return graph.get(vertex1).size() < graph.get(vertex2).size();
-    }
-
-    public int getMRVver()
-    {
-        int minDomain = Integer.MAX_VALUE;
-        int mrvVer = -1;
-        int remainDomain;
-        for(int i : graph.keySet())
-        {
-            if(colorList.get(i) != -1) continue;
-
-            remainDomain = domain.get(i).size();
-            
-            if(remainDomain < minDomain)
-            {
-                mrvVer = i;
-                minDomain = remainDomain;
-            }
-            else if(remainDomain == minDomain && tiebreaker(mrvVer, i) && mrvVer != -1)
-            {
-                mrvVer = i;
-            }
-            
-        }
-
-        return mrvVer;
-    }
-
-    
-
-    
-    private int getLCV(int vertex)
-    {
-        TreeMap<Integer, Integer> lcv = new TreeMap<>();
-        int count = 0;
-        for(int color : domain.get(vertex))
-        {
-            count = 0;
-            for(int neigbour : graph.get(vertex))
-            {
-                if(colorList.get(neigbour) != -1) continue;
-
-                if(domain.get(neigbour).contains(color)) count++;
-            }
-            lcv.put(color, count);  
-
-        }
-        
-
-        return lcv.firstEntry().getValue();
-    }
 
     public void printGraphContent()
     {
