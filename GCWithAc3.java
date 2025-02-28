@@ -1,6 +1,7 @@
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.TreeMap;
 
 public class GCWithAc3 extends GCForwardCheck 
@@ -87,7 +88,10 @@ public class GCWithAc3 extends GCForwardCheck
     {
         boolean rev = false;
         boolean hasValid;
-        for(int colorx : domain.get(x))
+
+        HashSet<Integer> xdom = new HashSet<>(domain.get(x));
+
+        for(int colorx : xdom)
         {   
             hasValid = false;
             for(int colory : domain.get(y))
