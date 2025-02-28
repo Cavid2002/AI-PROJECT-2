@@ -1,11 +1,11 @@
-public class GraphColorBacktrack extends GraphColor
+public class GCBacktracking extends GC
 {
-    GraphColorBacktrack(String filename)
+    GCBacktracking(String filename)
     {
         super(filename);
     }
     
-    private boolean canColor(int currentVertex, int color)
+    protected boolean isSafe(int currentVertex, int color)
     {
         for(int neigbourVertex : graph.get(currentVertex))
         {
@@ -17,7 +17,20 @@ public class GraphColorBacktrack extends GraphColor
         return true;
 
     }
+
     
+    public int getNextVertex()
+    {
+        for(int i : graph.keySet())
+        {
+            if(colorList.get(i) == -1)
+            {
+                return i;
+            }
+        }
+        return -1;
+    }
+
 
     public boolean backtracking(int vertex)
     {
@@ -28,7 +41,7 @@ public class GraphColorBacktrack extends GraphColor
 
         for(int i = 1; i <= colorCount; i++)
         {
-            if(canColor(vertex, i))
+            if(isSafe(vertex, i))
             {
                 colorList.put(vertex, i);
                     

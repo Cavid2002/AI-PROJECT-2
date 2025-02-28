@@ -4,14 +4,14 @@ import java.util.Scanner;
 import java.util.TreeMap;
 
 
-public class GraphColor
+public class GC
 {
     protected int colorCount;
     protected TreeMap<Integer, HashSet<Integer>> graph;
     protected TreeMap<Integer, Integer> colorList;
     protected TreeMap<Integer, HashSet<Integer>> domain;
 
-    GraphColor(String filename)
+    GC(String filename)
     {
         graph = new TreeMap<>();
         colorList = new TreeMap<>();
@@ -118,20 +118,6 @@ public class GraphColor
             domain.get(a).add(i);
         }
     }
-
-
-    public int getNextVertex()
-    {
-        for(int i : graph.keySet())
-        {
-            if(colorList.get(i) == -1)
-            {
-                return i;
-            }
-        }
-        return -1;
-    }
-
     
 
     public void printGraphContent()

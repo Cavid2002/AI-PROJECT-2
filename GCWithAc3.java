@@ -1,88 +1,28 @@
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.TreeMap;
 
-public class GraphColorForwardCheck extends GraphColor
+public class GCWithAc3 extends GCForwardCheck 
 {
-    GraphColorForwardCheck(String filename)
+    GCWithAc3(String filename)
     {
         super(filename);
-    }
-
-    private boolean updateDomain(int currentVertex, int color)
-    {
-        for(int neigbourVertex : graph.get(currentVertex))
-        {
-            if(colorList.get(neigbourVertex) == -1)
-            {
-                domain.get(neigbourVertex).remove(color);
-
-                if(domain.get(neigbourVertex).isEmpty()) return false;
-            }
-        }
-
-        return true;
-    }
+    }    
 
 
-    private void restoreDomain(int currentVertex, int color)
-    {
-        for(int neigbourVertex : graph.get(currentVertex))
-        {
-            if(colorList.get(neigbourVertex) == -1)
-            {
-                domain.get(neigbourVertex).add(color);
-            }
-        }
-    }
-    
-
-    
-    public boolean forwardChecking(int vertex)
-    { 
-        if(vertex == -1)
-        {
-            return true;
-        }
-
-
-        for(int i : domain.get(vertex))
-        {
-            colorList.put(vertex, i);
-
-            if(updateDomain(vertex, i) == false)
-            {
-                restoreDomain(vertex, i);
-                colorList.put(vertex, -1);
-                continue;
-            }
-
-            if(forwardChecking(getNextVertex()))
-            {
-                return true;
-            }
-
-
-            restoreDomain(vertex, i);
-            colorList.put(vertex, -1);
-        }
-
-        return false;
-    }
-    
-    public boolean forwardCheckingMRVandLCV(int vertex)
+    @Override
+    public boolean backtracking(int vertex)
     {
         if(vertex == -1)
         {
             return true;
         }
 
-        ArrayList<Integer> colors = getLCV(vertex);
-
-        for(int color : colors)
+        for(int color : getLCV(vertex))
         {
             colorList.put(vertex, color);
-        
+            
             if(updateDomain(vertex, color) == false)
             {
                 restoreDomain(vertex, color);
@@ -90,19 +30,85 @@ public class GraphColorForwardCheck extends GraphColor
                 continue;
             }
 
-            if(forwardCheckingMRVandLCV(getMRVver()))
+            if(ac3() && backtracking(getMRVver()))
             {
                 return true;
             }
 
             restoreDomain(vertex, color);
             colorList.put(vertex, -1);
-
         }
-
         
+
         return false;
     }
+
+
+    private boolean ac3()
+    {
+        ArrayDeque<int[]> q = new ArrayDeque<>();
+
+        for(int ver : graph.keySet())
+        {
+            for(int adj : graph.get(ver))
+            {
+                q.add(new int[]{ver, adj});
+            }
+        }
+
+
+        int x, y;
+        while(!q.isEmpty())
+        {
+            int[] arc = q.poll();
+            x = arc[0];
+            y = arc[1];
+
+            if(revise(x, y))
+            {
+                if(domain.get(x).isEmpty()) return false;
+
+                for(int z : graph.get(x))
+                {
+                    if(z != y)
+                    {
+                        q.add(new int[]{z, x});
+                    }
+                }
+            }
+        }
+
+        return true;
+    }
+
+
+
+    private boolean revise(int x, int y)
+    {
+        boolean rev = false;
+        boolean hasValid;
+        for(int colorx : domain.get(x))
+        {   
+            hasValid = false;
+            for(int colory : domain.get(y))
+            {
+                if(colorx != colory)
+                {
+                    hasValid = true;
+                    break;
+                }
+            }
+
+            if(hasValid == false)
+            {
+                domain.get(x).remove(colorx);
+                rev = true;
+            }
+        }
+
+        return rev;
+    }
+
 
     private boolean tiebreaker(int vertex1, int vertex2)
     {
@@ -136,7 +142,7 @@ public class GraphColorForwardCheck extends GraphColor
     }
 
     
-    private ArrayList<Integer> getLCV(int vertex) {
+    public ArrayList<Integer> getLCV(int vertex) {
         TreeMap<Integer, Integer> lcv = new TreeMap<>();
         int count;
 
