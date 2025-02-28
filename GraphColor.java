@@ -77,7 +77,6 @@ public class GraphColor
 
     private void readColorCount(Scanner scan)
     { 
-        System.out.println("readColorCount starting...");
         String line;
         String[] splitLine;
         while(scan.hasNextLine())
@@ -183,7 +182,7 @@ public class GraphColor
             return true;
         }
 
-        for(int i = 0; i < colorCount; i++)
+        for(int i = 1; i <= colorCount; i++)
         {
             if(canColor(vertex, i))
             {
@@ -202,7 +201,12 @@ public class GraphColor
         return false;
     }
 
+    public boolean AC3(int vertex)
+    {
 
+
+        return false;
+    }
 
     
     public boolean forwardChecking(int vertex)
@@ -220,7 +224,8 @@ public class GraphColor
             if(updateDomain(vertex, i) == false)
             {
                 restoreDomain(vertex, i);
-                return false;
+                colorList.put(vertex, -1);
+                continue;
             }
 
             if(forwardChecking(getNextVertex()))
@@ -235,9 +240,92 @@ public class GraphColor
 
         return false;
     }
+    
+    public boolean forwardCheckingMRVandLCV(int vertex)
+    {
+        if(vertex == -1)
+        {
+            return true;
+        }
 
+        int color = getLCV(vertex);
 
-    public void printGraph()
+        colorList.put(vertex, color);
+        
+        if(updateDomain(vertex, color) == false)
+        {
+            restoreDomain(vertex, color);
+            colorList.put(vertex, -1);
+            return false;
+        }
+        
+        if(forwardCheckingMRVandLCV(getMRVver()))
+        {
+            return true;
+        }
+
+        restoreDomain(vertex, color);
+        colorList.put(vertex, -1);
+
+        return false;
+    }
+
+    private boolean tiebreaker(int vertex1, int vertex2)
+    {
+        return graph.get(vertex1).size() < graph.get(vertex2).size();
+    }
+
+    public int getMRVver()
+    {
+        int minDomain = Integer.MAX_VALUE;
+        int mrvVer = -1;
+        int remainDomain;
+        for(int i : graph.keySet())
+        {
+            if(colorList.get(i) != -1) continue;
+
+            remainDomain = domain.get(i).size();
+            
+            if(remainDomain < minDomain)
+            {
+                mrvVer = i;
+                minDomain = remainDomain;
+            }
+            else if(remainDomain == minDomain && tiebreaker(mrvVer, i) && mrvVer != -1)
+            {
+                mrvVer = i;
+            }
+            
+        }
+
+        return mrvVer;
+    }
+
+    
+
+    
+    private int getLCV(int vertex)
+    {
+        TreeMap<Integer, Integer> lcv = new TreeMap<>();
+        int count = 0;
+        for(int color : domain.get(vertex))
+        {
+            count = 0;
+            for(int neigbour : graph.get(vertex))
+            {
+                if(colorList.get(neigbour) != -1) continue;
+
+                if(domain.get(neigbour).contains(color)) count++;
+            }
+            lcv.put(color, count);  
+
+        }
+        
+
+        return lcv.firstEntry().getValue();
+    }
+
+    public void printGraphContent()
     {
         System.out.println("Color Count:" + colorCount);
         for(int i : graph.keySet())
@@ -250,5 +338,17 @@ public class GraphColor
             System.out.println();
         }
     }
+
+    public void printColorContent()
+    {
+        System.out.println("Coloring Result");
+        for(int i : colorList.keySet())
+        {
+            System.out.println(i + " -> " + colorList.get(i));
+        }
+    }
+
+
+
 
 }

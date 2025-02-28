@@ -3,10 +3,23 @@ public class Main
 {
     public static void main(String[] args)
     {
-        GraphColor gc = new GraphColor("./samples/sample2.txt");
+        GraphColor gc1 = new GraphColor("./samples/sample2.txt");
+        GraphColor gc2 = new GraphColor("./samples/sample2.txt");
 
-        gc.printGraph();
+        gc1.printGraphContent();
+        gc2.printGraphContent();
 
-        gc.backtracking(gc.getNextVertex());
+        boolean res = gc1.backtracking(gc1.getNextVertex());
+        gc2.forwardChecking(gc2.getNextVertex());
+        
+        if(res == false)
+        {
+            System.out.println("Impossible");
+            return;
+        }
+
+        gc1.printColorContent();
+        gc2.printColorContent();
+
     }
 }
