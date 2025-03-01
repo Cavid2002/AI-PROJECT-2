@@ -5,7 +5,12 @@ public class GCForwardCheck extends GCBacktracking
     {
         super(filename);
     }
-
+    
+    @Override
+    public boolean solve()
+    {
+        return backtracking(getNextVertex());
+    }
 
     @Override
     public boolean backtracking(int vertex)

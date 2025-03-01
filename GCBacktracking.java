@@ -4,6 +4,11 @@ public class GCBacktracking extends GC
     {
         super(filename);
     }
+
+    protected boolean solve()
+    {
+        return backtracking(getNextVertex());
+    }
     
     protected boolean isSafe(int currentVertex, int color)
     {

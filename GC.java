@@ -58,8 +58,6 @@ public class GC
             a = Integer.parseInt(splitLine[0]);
             b = Integer.parseInt(splitLine[1]);
 
-            System.out.println(a + " " + b);
-
             insertToGraph(a, b);
             insertToGraph(b, a);
 

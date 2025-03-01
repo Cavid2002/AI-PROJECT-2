@@ -9,6 +9,14 @@ public class GCForwardCheckWithOrdering extends GCForwardCheck
         super(filename);
     }   
 
+
+    @Override
+    public boolean solve()
+    {
+        return backtracking(getMRVver());
+    }
+
+    
     @Override
     public boolean backtracking(int vertex)
     {

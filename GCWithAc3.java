@@ -4,7 +4,7 @@ import java.util.Comparator;
 import java.util.HashSet;
 import java.util.TreeMap;
 
-public class GCWithAc3 extends GCForwardCheck 
+public class GCWithAc3 extends GCBacktracking 
 {
     GCWithAc3(String filename)
     {
@@ -12,104 +12,107 @@ public class GCWithAc3 extends GCForwardCheck
     }    
 
 
-    @Override
-    public boolean backtracking(int vertex)
+    public boolean solve()
     {
-        if(vertex == -1)
-        {
-            return true;
-        }
-
-        for(int color : getLCV(vertex))
-        {
-            colorList.put(vertex, color);
-            
-            if(updateDomain(vertex, color) == false)
-            {
-                restoreDomain(vertex, color);
-                colorList.put(vertex, -1);
-                continue;
-            }
-
-            if(ac3() && backtracking(getMRVver()))
-            {
-                return true;
-            }
-
-            restoreDomain(vertex, color);
-            colorList.put(vertex, -1);
-        }
-        
-
-        return false;
+        return backtracking(getMRVver());
     }
 
 
-    private boolean ac3()
+    @Override
+    public boolean backtracking(int vertex) 
     {
-        ArrayDeque<int[]> q = new ArrayDeque<>();
+        if (vertex == -1) {
+            return true;
+        }
 
-        for(int ver : graph.keySet())
+        
+        for (int color : getLCV(vertex)) {
+            colorList.put(vertex, color);
+
+            HashSet<Integer> domainCopy = new HashSet<>(domain.get(vertex));
+            
+            domain.get(vertex).clear();
+            domain.get(vertex).add(color);
+
+            if (ac3()) {
+                int nextVertex = getMRVver();
+                if (backtracking(nextVertex)) {
+                    return true;
+                }
+            }
+
+            domain.put(vertex, domainCopy);
+            colorList.put(vertex, -1); 
+        }
+
+        return false;
+    }
+    
+
+    private boolean isConsistent(int colorx, HashSet<Integer> ydom)
+    {
+        for(int colory : ydom)
         {
-            for(int adj : graph.get(ver))
+            if(colorx != colory)
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    
+    private boolean ac3() {
+        ArrayDeque<int[]> q = new ArrayDeque<>();
+    
+        for (int ver : graph.keySet()) 
+        {
+            for (int adj : graph.get(ver))
             {
                 q.add(new int[]{ver, adj});
             }
         }
-
-
-        int x, y;
-        while(!q.isEmpty())
+    
+        while (!q.isEmpty()) 
         {
             int[] arc = q.poll();
-            x = arc[0];
-            y = arc[1];
-
-            if(revise(x, y))
-            {
-                if(domain.get(x).isEmpty()) return false;
-
-                for(int z : graph.get(x))
-                {
-                    if(z != y)
-                    {
+            int x = arc[0];
+            int y = arc[1];
+    
+            if (revise(x, y)) {
+                if (domain.get(x).isEmpty()) {
+                    return false; 
+                }
+    
+                for (int z : graph.get(x)) {
+                    if (z != y) {
                         q.add(new int[]{z, x});
                     }
                 }
             }
         }
-
+    
         return true;
     }
 
 
-
-    private boolean revise(int x, int y)
+    private boolean revise(int x, int y) 
     {
         boolean rev = false;
-        boolean hasValid;
-
         HashSet<Integer> xdom = new HashSet<>(domain.get(x));
-
-        for(int colorx : xdom)
-        {   
-            hasValid = false;
-            for(int colory : domain.get(y))
-            {
-                if(colorx != colory)
-                {
-                    hasValid = true;
-                    break;
-                }
-            }
-
-            if(hasValid == false)
+    
+        for (int colorx : xdom)
+        {
+            if (!isConsistent(colorx, domain.get(y))) 
             {
                 domain.get(x).remove(colorx);
                 rev = true;
+                if(domain.get(x).isEmpty())
+                {
+                    return false;
+                }
             }
         }
-
         return rev;
     }
 
@@ -163,5 +166,6 @@ public class GCWithAc3 extends GCForwardCheck
         sortedColors.sort(Comparator.comparingInt(lcv::get));
         return sortedColors;
     }    
+
 
 }
