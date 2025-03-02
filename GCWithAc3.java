@@ -21,27 +21,36 @@ public class GCWithAc3 extends GCBacktracking
     @Override
     public boolean backtracking(int vertex) 
     {
-        if (vertex == -1) {
+        if (vertex == -1) 
+        {
             return true;
         }
 
         
-        for (int color : getLCV(vertex)) {
+        for (int color : getLCV(vertex))
+        {
             colorList.put(vertex, color);
 
-            HashSet<Integer> domainCopy = new HashSet<>(domain.get(vertex));
-            
+            TreeMap<Integer, HashSet<Integer>> domainCopy = new TreeMap<>();
+            for (int i : domain.keySet()) 
+            {
+                domainCopy.put(i, new HashSet<>(domain.get(i)));
+            }
+
+
             domain.get(vertex).clear();
             domain.get(vertex).add(color);
 
-            if (ac3()) {
+            if (ac3()) 
+            {
                 int nextVertex = getMRVver();
-                if (backtracking(nextVertex)) {
+                if (backtracking(nextVertex))
+                {
                     return true;
                 }
             }
 
-            domain.put(vertex, domainCopy);
+            domain = domainCopy;
             colorList.put(vertex, -1); 
         }
 

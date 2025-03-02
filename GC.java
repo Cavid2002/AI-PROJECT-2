@@ -16,7 +16,6 @@ public class GC
         graph = new TreeMap<>();
         colorList = new TreeMap<>();
         domain = new TreeMap<>();
-
         try
         {
             File file = new File(filename);
