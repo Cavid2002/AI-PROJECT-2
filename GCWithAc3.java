@@ -71,7 +71,8 @@ public class GCWithAc3 extends GCBacktracking
     }
 
     
-    private boolean ac3() {
+    private boolean ac3()
+    {
         ArrayDeque<int[]> q = new ArrayDeque<>();
     
         for (int ver : graph.keySet()) 
@@ -170,7 +171,8 @@ public class GCWithAc3 extends GCBacktracking
     }
 
     
-    public ArrayList<Integer> getLCV(int vertex) {
+    public ArrayList<Integer> getLCV(int vertex) 
+    {
         TreeMap<Integer, Integer> lcv = new TreeMap<>();
         int count;
 
