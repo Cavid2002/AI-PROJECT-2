@@ -128,7 +128,19 @@ public class GCWithAc3 extends GCBacktracking
 
     private boolean tiebreaker(int vertex1, int vertex2)
     {
-        return graph.get(vertex1).size() < graph.get(vertex2).size();
+        int count1 = 0;
+        int count2 = 0;
+        for(int i : graph.get(vertex1))
+        {
+            if(colorList.get(i) == -1) count1++;
+        }
+
+        for(int i : graph.get(vertex2))
+        {
+            if(colorList.get(i) == -1) count2++;
+        }
+
+        return count1 < count2;
     }
 
     public int getMRVver()
