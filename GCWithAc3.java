@@ -179,9 +179,11 @@ public class GCWithAc3 extends GCBacktracking
         TreeMap<Integer, Integer> lcv = new TreeMap<>();
         int count;
 
-        for (int color : domain.get(vertex)) {
+        for (int color : domain.get(vertex)) 
+        {
             count = 0;
-            for (int neighbor : graph.get(vertex)) {
+            for (int neighbor : graph.get(vertex)) 
+            {
                 if (colorList.get(neighbor) != -1) continue;
                 if (domain.get(neighbor).contains(color)) count++;
             }
