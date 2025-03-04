@@ -9,7 +9,7 @@ public class GCForwardCheck extends GCBacktracking
     @Override
     public boolean solve()
     {
-        return backtracking(getNextVertex(graph.firstKey()));
+        return backtracking(graph.firstKey());
     }
 
     @Override
@@ -32,7 +32,7 @@ public class GCForwardCheck extends GCBacktracking
                 continue;
             }
 
-            if(backtracking(getNextVertex(vertex)))
+            if(backtracking(getNextVertex()))
             {
                 return true;
             }

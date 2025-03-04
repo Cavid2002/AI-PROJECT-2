@@ -3,16 +3,11 @@ public class Main
 {
     public static void main(String[] args)
     {
-        GCBacktracking c = new GCWithAc3("./samples/sample6.txt");
+        GCWithAc3 d = new GCWithAc3("./samples/sample7.txt");
 
-        GCForwardCheck a = new GCForwardCheckWithOrdering("./samples/sample6.txt");
-        a.printGraphContent();
-
-        a.solve();
-        c.solve();
+        d.solve();
 
         
-        a.printColorContent();
-        c.printColorContent();
+        d.printColorContent();
     }
 }

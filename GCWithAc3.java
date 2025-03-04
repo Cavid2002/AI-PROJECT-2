@@ -11,10 +11,14 @@ public class GCWithAc3 extends GCBacktracking
         super(filename);
     }    
 
-
+    @Override
     public boolean solve()
     {
-        return backtracking(getMRVver());
+        if(ac3())
+        {
+            return backtracking(getMRVver());
+        }
+        return false;
     }
 
 
@@ -56,7 +60,6 @@ public class GCWithAc3 extends GCBacktracking
 
         return false;
     }
-    
 
     private boolean isConsistent(int colorx, HashSet<Integer> ydom)
     {
@@ -189,6 +192,5 @@ public class GCWithAc3 extends GCBacktracking
         sortedColors.sort(Comparator.comparingInt(lcv::get));
         return sortedColors;
     }    
-
 
 }

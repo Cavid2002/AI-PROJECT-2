@@ -7,7 +7,7 @@ public class GCBacktracking extends GC
 
     public boolean solve()
     {
-        return backtracking(getNextVertex(graph.firstKey()));
+        return backtracking(graph.firstKey());
     }
     
     protected boolean isSafe(int currentVertex, int color)
@@ -24,14 +24,16 @@ public class GCBacktracking extends GC
     }
 
     
-    public int getNextVertex(int vertex)
+    public int getNextVertex()
     {
-        
-        if(graph.higherKey(vertex) != null)
+        for(int i : graph.keySet())
         {
-            return -1;
+            if(colorList.get(i) == -1)
+            {
+                return i;
+            }
         }
-        return graph.higherKey(vertex);
+        return -1;
     }
 
 
@@ -48,7 +50,7 @@ public class GCBacktracking extends GC
             {
                 colorList.put(vertex, i);
                 
-                if(backtracking(getNextVertex(vertex)))
+                if(backtracking(getNextVertex()))
                 {
                     return true;
                 }
