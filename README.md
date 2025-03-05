@@ -315,6 +315,42 @@ private boolean isConsistent(int colorx, HashSet<Integer> ydom)
 ## Putting all together (AC3 + Backtracking + Ordering):
 The backtracking method is used to solve a constraint satisfaction problem by recursively assigning colors to vertices in a graph. The method tries each color in the least constraining value (LCV) order. For each color, it makes a deep copy of the domain to preserve the original state, assigns the color to the vertex, and checks arc consistency using the AC-3 algorithm and propagates constraints to other vertexes. If the AC-3 algorithm maintains consistency, it proceeds to the next vertex determined by the minimum remaining values (MRV) heuristic and recursively calls the backtracking method. If a solution is found, it returns true; otherwise, it backtracks by restoring the original domain and removing the color assignment, ultimately returning false if no valid solution is found.
 
+```Java
+@Override
+public boolean backtracking(int vertex) 
+{
+    if (vertex == -1) 
+    {
+        return true;
+    }
+    
+    for (int color : getLCV(vertex))
+    {
+        colorList.put(vertex, color);
+        TreeMap<Integer, HashSet<Integer>> domainCopy = new TreeMap<>();
+        for (int i : domain.keySet()) 
+        {
+            domainCopy.put(i, new HashSet<>(domain.get(i)));
+        }
+        domain.get(vertex).clear();
+        domain.get(vertex).add(color);
+        if (ac3()) 
+        {
+            int nextVertex = getMRVver();
+            if (backtracking(nextVertex))
+            {
+                return true;
+            }
+        }
+        domain = domainCopy;
+        colorList.put(vertex, -1); 
+    }
+    return false;
+}
+
+```
+
+To call the method it is first necessary to specify a file in certain format they are aviable through the samples folder. By providing filename to constructor and calling solve method backtracking with AC3 and ordering will run:
 
 ```Java
 public class Main
