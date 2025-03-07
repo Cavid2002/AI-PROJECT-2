@@ -6,9 +6,25 @@ import java.util.TreeMap;
 
 public class GC
 {
+     /**
+     * The number of colors available for graph coloring.
+     */
     protected int colorCount;
+
+    /**
+     * A TreeMap representing the graph. The key is a node, and the value is a set of adjacent nodes.
+     */
     protected TreeMap<Integer, HashSet<Integer>> graph;
+    
+    /**
+     * A TreeMap representing the color assigned to each node. The key is a node, and the value is the color.
+     * A value of -1 indicates that the node has not been colored yet.
+     */
     protected TreeMap<Integer, Integer> colorList;
+    
+    /**
+     * A TreeMap representing the domain of possible colors for each node. The key is a node, and the value is a set of available colors.
+     */
     protected TreeMap<Integer, HashSet<Integer>> domain;
 
     GC(String filename)
@@ -94,6 +110,12 @@ public class GC
 
     }
 
+    /**
+     * Inserts an edge into the graph.
+     * 
+     * @param a The first node of the edge.
+     * @param b The second node of the edge.
+     */
     protected void insertToGraph(int a, int b)
     {
         if(graph.containsKey(a) == false)
@@ -103,7 +125,11 @@ public class GC
         graph.get(a).add(b);
     }
 
-
+    /**
+     * Initializes the domain of possible colors for a given node.
+     * 
+     * @param a The node for which to initialize the domain.
+     */
     protected void initDomain(int a)
     {
         if(domain.containsKey(a)) return;
@@ -117,6 +143,9 @@ public class GC
     }
     
 
+    /**
+     * Prints the content of the graph, including the color count and adjacency lists.
+     */
     public void printGraphContent()
     {
         System.out.println("Color Count:" + colorCount);
@@ -131,6 +160,9 @@ public class GC
         }
     }
 
+    /**
+     * Prints the coloring result for each node.
+     */
     public void printColorContent()
     {
         System.out.println("Coloring Result");

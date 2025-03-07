@@ -11,6 +11,13 @@ public class GCWithAc3 extends GCBacktracking
         super(filename);
     }    
 
+
+
+    /**
+     * Solves the graph coloring problem using AC-3 for constraint propagation and backtracking.
+     * 
+     * @return true if a valid coloring is found, false otherwise.
+     */
     @Override
     public boolean solve()
     {
@@ -22,6 +29,12 @@ public class GCWithAc3 extends GCBacktracking
     }
 
 
+    /**
+     * Recursive backtracking method to assign colors to vertices using MRV and LCV heuristics, propagating constraints using AC-3.
+     * 
+     * @param vertex The current vertex to be colored.
+     * @return true if a valid coloring is found for the remaining vertices, false otherwise.
+     */
     @Override
     public boolean backtracking(int vertex) 
     {
@@ -61,6 +74,14 @@ public class GCWithAc3 extends GCBacktracking
         return false;
     }
 
+
+    /**
+     * Checks if a color assignment for a vertex is consistent with its adjacent vertices.
+     * 
+     * @param colorx The color to be checked.
+     * @param ydom The domain of colors for the adjacent vertex.
+     * @return true if the color assignment is consistent, false otherwise.
+     */
     private boolean isConsistent(int colorx, HashSet<Integer> ydom)
     {
         for(int colory : ydom)
@@ -73,7 +94,11 @@ public class GCWithAc3 extends GCBacktracking
         return false;
     }
 
-    
+    /**
+     * Implements the AC-3 algorithm for constraint propagation.
+     * 
+     * @return true if the constraints are consistent, false otherwise.
+     */
     private boolean ac3()
     {
         ArrayDeque<int[]> q = new ArrayDeque<>();
@@ -108,7 +133,13 @@ public class GCWithAc3 extends GCBacktracking
         return true;
     }
 
-
+    /**
+     * Revises the domain of a vertex based on the constraints of its adjacent vertex.
+     * 
+     * @param x The vertex whose domain is being revised.
+     * @param y The adjacent vertex.
+     * @return true if the domain of x is revised, false otherwise.
+     */
     private boolean revise(int x, int y) 
     {
         boolean rev = false;
@@ -129,7 +160,13 @@ public class GCWithAc3 extends GCBacktracking
         return rev;
     }
 
-
+    /**
+     * Breaks ties between vertices with the same domain size by choosing the one with fewer uncolored neighbors.
+     * 
+     * @param vertex1 The first vertex to compare.
+     * @param vertex2 The second vertex to compare.
+     * @return true if vertex1 has fewer uncolored neighbors than vertex2, false otherwise.
+     */
     private boolean tiebreaker(int vertex1, int vertex2)
     {
         int count1 = 0;
@@ -147,6 +184,12 @@ public class GCWithAc3 extends GCBacktracking
         return count1 < count2;
     }
 
+
+    /**
+     * Selects the vertex with the Minimum Remaining Values (MRV) heuristic.
+     * 
+     * @return The vertex with the smallest domain size, or -1 if all vertices are colored.
+     */
     public int getMRVver()
     {
         int minDomain = Integer.MAX_VALUE;
@@ -173,7 +216,13 @@ public class GCWithAc3 extends GCBacktracking
         return mrvVer;
     }
 
-    
+
+     /**
+     * Orders the colors for a vertex using the Least Constraining Value (LCV) heuristic.
+     * 
+     * @param vertex The vertex for which to order the colors.
+     * @return A list of colors ordered by how few constraints they impose on neighboring vertices.
+     */
     public ArrayList<Integer> getLCV(int vertex) 
     {
         TreeMap<Integer, Integer> lcv = new TreeMap<>();
