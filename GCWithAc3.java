@@ -2,6 +2,9 @@ import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
 
 public class GCWithAc3 extends GCBacktracking 
@@ -21,11 +24,7 @@ public class GCWithAc3 extends GCBacktracking
     @Override
     public boolean solve()
     {
-        if(ac3())
-        {
-            return backtracking(getMRVver());
-        }
-        return false;
+        return backtracking(getMRVver());
     }
 
 
@@ -143,7 +142,7 @@ public class GCWithAc3 extends GCBacktracking
     private boolean revise(int x, int y) 
     {
         boolean rev = false;
-        HashSet<Integer> xdom = new HashSet<>(domain.get(x));
+        Set<Integer> xdom = new HashSet<>(domain.get(x));
     
         for (int colorx : xdom)
         {
@@ -194,12 +193,11 @@ public class GCWithAc3 extends GCBacktracking
     {
         int minDomain = Integer.MAX_VALUE;
         int mrvVer = -1;
-        int remainDomain;
         for(int i : graph.keySet())
         {
             if(colorList.get(i) != -1) continue;
 
-            remainDomain = domain.get(i).size();
+            int remainDomain = domain.get(i).size();
             
             if(remainDomain < minDomain)
             {
@@ -223,9 +221,9 @@ public class GCWithAc3 extends GCBacktracking
      * @param vertex The vertex for which to order the colors.
      * @return A list of colors ordered by how few constraints they impose on neighboring vertices.
      */
-    public ArrayList<Integer> getLCV(int vertex) 
+    public List<Integer> getLCV(int vertex) 
     {
-        TreeMap<Integer, Integer> lcv = new TreeMap<>();
+        Map<Integer, Integer> lcv = new TreeMap<>();
         int count;
 
         for (int color : domain.get(vertex)) 
